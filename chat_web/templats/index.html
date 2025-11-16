@@ -1,34 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Chat</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  body { font-family: sans-serif; margin: 10px; }
-  .msg { padding: 6px; margin-bottom: 6px; background: #eee; }
-  .time { font-size: 10px; color: #666; }
-  form { margin-top: 20px; }
-  input, button { padding: 6px; width: 100%; margin-top: 5px; }
-</style>
-<meta http-equiv="refresh" content="20" />
+    <meta charset="UTF-8">
+    <title>Dumbphone Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+        }
+        #chat {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+        input, button {
+            padding: 8px;
+            margin-top: 5px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Chat</h2>
+    <h2>Dumbphone Chat</h2>
 
-{% for m in messages %}
-<div class="msg">
-  <b>{{ m.user }}:</b> {{ m.text }}<br>
-  <div class="time">{{ m.time }}</div>
-</div>
-{% endfor %}
+    <!-- Chat messages -->
+    <div id="chat">Loading messages...</div>
 
-<form method="POST">
-  <input name="username" placeholder="Name" required>
-  <input name="message" placeholder="Message" required>
-  <button type="submit">Send</button>
-</form>
+    <br>
+
+    <!-- Username -->
+    <input id="username" type="text" placeholder="Your Name">
+
+    <!-- Message -->
+    <input id="message" type="text" placeholder="Type Message">
+
+    <!-- Send button -->
+    <button onclick="sendMsg()">Send</button>
+
+    <script>
+        const API = "https://dumbass-website-for-dumbphones-backend.onrender.com";
+
+        async function sendMsg() {
+            const username = document.getElementById("username").value;
+            const message = document.getElementById("message").value;
+
+            if (!username || !message) return;
+
+            await fetch(`${API}/send`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, message })
+            });
+
+            document.getElementById("message").value = "";
+            loadMessages();
+        }
+
+        async function loadMessages() {
+            try {
+                const res = await fetch(`${API}/messages`);
+                const msgs = await res.json();
+
+                let box = document.getElementById("chat");
+                box.innerHTML = "";
+
+                msgs.forEach(m => {
+                    box.innerHTML += `<div><b>${m.user}:</b> ${m.text}</div>`;
+                });
+
+                box.scrollTop = box.scrollHeight;
+            } catch (err) {
+                console.log("Error loading messages");
+            }
+        }
+
+        setInterval(loadMessages, 2000);
+        loadMessages();
+    </script>
 
 </body>
 </html>
