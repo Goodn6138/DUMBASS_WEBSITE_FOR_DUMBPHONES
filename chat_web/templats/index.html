@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: sans-serif; margin: 10px; }
+  .msg { padding: 6px; margin-bottom: 6px; background: #eee; }
+  .time { font-size: 10px; color: #666; }
+  form { margin-top: 20px; }
+  input, button { padding: 6px; width: 100%; margin-top: 5px; }
+</style>
+<meta http-equiv="refresh" content="5" />
+</head>
+<body>
+
+<h2>Chat</h2>
+
+{% for m in messages %}
+<div class="msg">
+  <b>{{ m.user }}:</b> {{ m.text }}<br>
+  <div class="time">{{ m.time }}</div>
+</div>
+{% endfor %}
+
+<form method="POST">
+  <input name="username" placeholder="Name" required>
+  <input name="message" placeholder="Message" required>
+  <button type="submit">Send</button>
+</form>
+
+</body>
+</html>
